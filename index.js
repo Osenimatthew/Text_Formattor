@@ -11,42 +11,80 @@ document.querySelector("button").addEventListener("click", () => {
   // Remove duplicate lines
   const uniqueText = removeDuplicateLines(inputText);
 
+  // Capitalize names and format emails
+  const formattedNames = formatNames(uniqueText);
+
   // Format the text by adding two <br> tags after each line
-  const formattedText = formatTextWithBrTags(uniqueText);
+  const formattedTextWithBrTags = formatTextWithBrTags(formattedNames);
 
   // Display the formatted text in the output div
-  outputDiv.innerHTML = formattedText; // Use innerHTML to render <br> tags
+  outputDiv.innerHTML = formattedTextWithBrTags; // Use innerHTML to render <br> tags
 });
 
 // Function to remove duplicate lines
 function removeDuplicateLines(inputText) {
-  // Split the input text into lines
   const lines = inputText.split("\n");
-
-  // Use a Set to store unique lines
   const uniqueLines = new Set();
-
-  // Filter the lines to keep only the unique ones
   const filteredLines = lines.filter((line) => {
     if (uniqueLines.has(line.trim())) {
-      return false; // Duplicate line, skip it
+      return false;
     }
-    uniqueLines.add(line.trim()); // Add to the set
-    return true; // Keep this line
+    uniqueLines.add(line.trim());
+    return true;
+  });
+  return filteredLines.join("\n");
+}
+
+// Function to capitalize first and last name, excluding titles
+function formatNames(inputText) {
+  const titles = [
+    "MSc",
+    "FRICS",
+    "PhD",
+    "MD",
+    "Esq",
+    "M.A",
+    "GPhT",
+    "LMSW",
+    "CALP",
+    "LD",
+    "RD",
+    "MDS",
+    "OTD",
+    "OTR/L",
+    "M.Ed",
+    "MDS",
+  ]; // Titles to ignore
+
+  const lines = inputText.split("\n");
+
+  const formattedLines = lines.map((line) => {
+    const parts = line.split(" ");
+    const email = parts.find((part) => part.includes("@"));
+    const names = parts.filter(
+      (part) =>
+        !part.includes("@") &&
+        !titles.some((title) => part.toUpperCase() === title) // Remove titles
+    );
+
+    if (names.length < 1) return line; // If no names are found, return the line as it is
+
+    const firstName =
+      names[0].charAt(0).toUpperCase() + names[0].slice(1).toLowerCase();
+    const lastName =
+      names[names.length - 1].charAt(0).toUpperCase() +
+      names[names.length - 1].slice(1).toLowerCase();
+
+    return `${firstName} ${lastName} ${email}`;
   });
 
-  // Join the filtered lines back into a single string
-  return filteredLines.join("\n");
+  return formattedLines.join("\n");
 }
 
 // Function to format text by adding two <br> tags after each line
 function formatTextWithBrTags(inputText) {
-  // Split the text into lines
   const lines = inputText.split("\n");
-
-  // Add two <br> tags after each line
   const formattedText = lines.map((line) => `${line}<br><br><br>`).join("");
-
   return formattedText;
 }
 
