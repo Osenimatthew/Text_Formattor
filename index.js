@@ -10,7 +10,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyAOkJP8oimGChOhcKmyGU-PepgHlKMLZeI",
   authDomain: "ceo-database-7aebb.firebaseapp.com",
   projectId: "ceo-database-7aebb",
-  storageBucket: "ceo-database-7aebb.firebasestorage.app",
+  storageBucket: "ceo-database-7aebb.appspot.com",
   messagingSenderId: "624837365691",
   appId: "1:624837365691:web:7dfdfe1cfc7a7696407e9e",
 };
@@ -23,6 +23,8 @@ const db = getFirestore(app);
 const domainInput = document.getElementById("domain");
 const generateBtn = document.getElementById("generateBtn");
 const outputElement = document.getElementById("output");
+const copyBtn = document.getElementById("copyBtn");
+const notification = document.getElementById("notification");
 
 // Titles to ignore
 const TITLES = [
@@ -46,6 +48,8 @@ const TITLES = [
 
 // Event listener for the Generate button
 generateBtn.addEventListener("click", async () => {
+  copyBtn.style.display = "block";
+
   const inputText = domainInput.value.trim();
   const uniqueLines = removeDuplicateLines(inputText);
 
@@ -86,23 +90,18 @@ function removeDuplicateLines(inputText) {
 
 // Function to correct the input line
 function correctInput(line) {
-  // Remove commas
-  line = line.replace(/,/g, "");
+  line = line.replace(/,/g, ""); // Remove commas
+  line = line.replace(/[\(\{\[].*?[\)\}\]]/g, ""); // Remove names in brackets
 
-  // Remove names in brackets
-  line = line.replace(/[\(\{\[].*?[\)\}\]]/g, "");
-
-  // Split line into parts
   const parts = line.split(" ");
   const email = parts.find((part) => part.includes("@"));
   const names = parts.filter(
     (part) =>
       !part.includes("@") &&
-      !TITLES.some((title) => part.toUpperCase() === title) && // Remove titles
+      !TITLES.some((title) => part.toUpperCase() === title) &&
       !part.match(/^[({].*[)}]$/) // Remove names in parentheses or braces
   );
 
-  // Remove middle name if more than 2 names
   let formattedName = "";
   if (names.length > 2) {
     const firstName = capitalizeFirstLetter(names[0]);
@@ -112,7 +111,6 @@ function correctInput(line) {
     formattedName = names.map(capitalizeFirstLetter).join(" ");
   }
 
-  // Return the formatted name along with the email unchanged
   return `${formattedName} ${email || ""}`.trim();
 }
 
@@ -149,3 +147,25 @@ async function getCEOName(domain) {
     return null; // Error fetching CEO name
   }
 }
+
+// Copy button functionality
+copyBtn.addEventListener("click", () => {
+  copyBtn.style.display = "none";
+  const output = outputElement.textContent;
+  navigator.clipboard
+    .writeText(output)
+    .then(() => {
+      notification.textContent = "Copied to successfully!";
+      notification.classList.add("show");
+
+      setTimeout(() => {
+        notification.classList.remove("show");
+        domainInput.value = "";
+        outputElement.textContent = "";
+        copyBtn.style.display = "none";
+      }, 4000);
+    })
+    .catch((err) => {
+      console.error("Error copying text: ", err);
+    });
+});
