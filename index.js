@@ -155,7 +155,7 @@ copyBtn.addEventListener("click", () => {
   navigator.clipboard
     .writeText(output)
     .then(() => {
-      notification.textContent = "Copied to successfully!";
+      notification.textContent = "Copied to clipboard successfully!";
       notification.classList.add("show");
 
       setTimeout(() => {
