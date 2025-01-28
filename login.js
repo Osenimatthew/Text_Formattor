@@ -38,18 +38,6 @@ const logoutButton = document.getElementById("logout");
 const protectedContent = document.getElementById("hide-browse");
 const protectedLink = document.getElementById("hide-playlist");
 
-//check for auth status changes
-onAuthStateChanged(auth, (user) => {
-  if (user) {
-    console.log("User is logged in:", user);
-    input.style.display = "block";
-    const uid = user.uid;
-  } else {
-    console.log("No user is logged in.");
-    input.style.display = "none";
-  }
-});
-
 // Login event listener
 const submit = document.getElementById("submit");
 if (submit) {
