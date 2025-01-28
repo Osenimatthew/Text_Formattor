@@ -65,7 +65,7 @@ if (submit) {
       })
       .then((userCredential) => {
         alert("Signing in, please click OK");
-        window.location.href = "index.html";
+        window.location.href = "main.html";
       })
       .catch((error) => {
         alert("Sorry, invalid login details");
@@ -81,7 +81,7 @@ if (googleSignInBtn) {
     signInWithPopup(auth, provider)
       .then((result) => {
         alert("Logged in with Google");
-        window.location.href = "index.html";
+        window.location.href = "main.html";
       })
       .catch((error) => {
         alert(`Error: ${error.message}`);
