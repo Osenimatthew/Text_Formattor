@@ -47,7 +47,7 @@ submit.addEventListener("click", async function (event) {
     await auth.signOut();
 
     // Optionally redirect to a login page or a verification reminder page
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   } catch (error) {
     // Handle errors
     const errorCode = error.code;
